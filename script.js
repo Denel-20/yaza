@@ -14,14 +14,11 @@ function toggleLocationSelection() {
     } else {
         locationSelection.style.display = "none";
         roomLayout.style.display = "none"; 
-
-        // ⚡ 선택한 장소 및 좌석 초기화
+        
         document.querySelectorAll("input[name='location']").forEach(radio => radio.checked = false);
         document.querySelectorAll(".chair").forEach(chair => chair.classList.remove("clicked"));
     }
 }
-
-// 장소 선택 시 좌석 선택 화면 표시/숨김
 document.querySelectorAll("input[name='location']").forEach(radio => {
     radio.addEventListener("change", () => {
         const afternoonChecked = document.getElementById("afternoon").checked;
@@ -35,16 +32,12 @@ document.querySelectorAll("input[name='location']").forEach(radio => {
         }
     });
 });
-
-// 하나의 좌석만 선택 가능하도록 설정
 document.querySelectorAll(".chair").forEach(chair => {
     chair.addEventListener("click", () => {
         document.querySelectorAll(".chair").forEach(item => item.classList.remove("clicked"));
         chair.classList.add("clicked");
     });
 });
-
-// 오후 자율학습을 하지 않는다면 석식 기부 여부를 묻는 창 표시
 function checkAfternoonParticipation() {
     const afternoonChecked = document.getElementById("afternoon").checked;
 
