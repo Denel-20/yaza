@@ -4,7 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>자율학습 참여 선택</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .room {
+            width: 600px;
+            height: 600px;
+            display: grid;
+            grid-template-columns: repeat(11, 50px);
+            grid-template-rows: repeat(11, 50px);
+            gap: 5px;
+        }
+
+        .table {
+            background-color: brown;
+        }
+
+        .chair {
+            background-color: gray;
+            cursor: pointer;
+        }
+
+        .chair.clicked {
+            background-color: blue;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -29,31 +83,31 @@
         <div id="room-layout" style="display: none;">
             <h3>좌석 선택</h3>
             <div class="room">
-            <div class="table" style="grid-column: 1 / span 11; grid-row: 1;"></div>
-            <div class="chair" style="grid-column: 1; grid-row: 2;"></div>
-            <div class="chair" style="grid-column: 3; grid-row: 2;"></div>
-            <div class="chair" style="grid-column: 5; grid-row: 2;"></div>
-            <div class="chair" style="grid-column: 7; grid-row: 2;"></div>
-            <div class="chair" style="grid-column: 9; grid-row: 2;"></div>
-            <div class="chair" style="grid-column: 11; grid-row: 2;"></div>
-            <div class="table" style="grid-column: 3; grid-row: 4 / span 7;"></div>
-            <div class="chair" style="grid-column: 2; grid-row: 4;"></div>
-            <div class="chair" style="grid-column: 2; grid-row: 6;"></div>
-            <div class="chair" style="grid-column: 2; grid-row: 8;"></div>
-            <div class="chair" style="grid-column: 2; grid-row: 10;"></div>
-            <div class="chair" style="grid-column: 4; grid-row: 4;"></div>
-            <div class="chair" style="grid-column: 4; grid-row: 6;"></div>
-            <div class="chair" style="grid-column: 4; grid-row: 8;"></div>
-            <div class="chair" style="grid-column: 4; grid-row: 10;"></div>
-            <div class="table" style="grid-column: 9; grid-row: 4 / span 7;"></div>
-            <div class="chair" style="grid-column: 8; grid-row: 4;"></div>
-            <div class="chair" style="grid-column: 8; grid-row: 6;"></div>
-            <div class="chair" style="grid-column: 8; grid-row: 8;"></div>
-            <div class="chair" style="grid-column: 8; grid-row: 10;"></div>
-            <div class="chair" style="grid-column: 10; grid-row: 4;"></div>
-            <div class="chair" style="grid-column: 10; grid-row: 6;"></div>
-            <div class="chair" style="grid-column: 10; grid-row: 8;"></div>
-            <div class="chair" style="grid-column: 10; grid-row: 10;"></div>
+                <div class="table" style="grid-column: 1 / span 11; grid-row: 1;"></div>
+                <div class="chair" style="grid-column: 1; grid-row: 2;"></div>
+                <div class="chair" style="grid-column: 3; grid-row: 2;"></div>
+                <div class="chair" style="grid-column: 5; grid-row: 2;"></div>
+                <div class="chair" style="grid-column: 7; grid-row: 2;"></div>
+                <div class="chair" style="grid-column: 9; grid-row: 2;"></div>
+                <div class="chair" style="grid-column: 11; grid-row: 2;"></div>
+                <div class="table" style="grid-column: 3; grid-row: 4 / span 7;"></div>
+                <div class="chair" style="grid-column: 2; grid-row: 4;"></div>
+                <div class="chair" style="grid-column: 2; grid-row: 6;"></div>
+                <div class="chair" style="grid-column: 2; grid-row: 8;"></div>
+                <div class="chair" style="grid-column: 2; grid-row: 10;"></div>
+                <div class="chair" style="grid-column: 4; grid-row: 4;"></div>
+                <div class="chair" style="grid-column: 4; grid-row: 6;"></div>
+                <div class="chair" style="grid-column: 4; grid-row: 8;"></div>
+                <div class="chair" style="grid-column: 4; grid-row: 10;"></div>
+                <div class="table" style="grid-column: 9; grid-row: 4 / span 7;"></div>
+                <div class="chair" style="grid-column: 8; grid-row: 4;"></div>
+                <div class="chair" style="grid-column: 8; grid-row: 6;"></div>
+                <div class="chair" style="grid-column: 8; grid-row: 8;"></div>
+                <div class="chair" style="grid-column: 8; grid-row: 10;"></div>
+                <div class="chair" style="grid-column: 10; grid-row: 4;"></div>
+                <div class="chair" style="grid-column: 10; grid-row: 6;"></div>
+                <div class="chair" style="grid-column: 10; grid-row: 8;"></div>
+                <div class="chair" style="grid-column: 10; grid-row: 10;"></div>
             </div>
         </div>
         
@@ -62,6 +116,50 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.getElementById("afternoon").addEventListener("change", toggleLocationSelection);
+        document.getElementById("night").addEventListener("change", toggleLocationSelection);
+        document.getElementById("submit").addEventListener("click", checkAfternoonParticipation);
+
+        function toggleLocationSelection() {
+            const afternoonChecked = document.getElementById("afternoon").checked;
+            const nightChecked = document.getElementById("night").checked;
+            const locationSelection = document.getElementById("location-selection");
+            const roomLayout = document.getElementById("room-layout");
+
+            if (afternoonChecked || nightChecked) {
+                locationSelection.style.display = "block";
+            } else {
+                locationSelection.style.display = "none";
+                roomLayout.style.display = "none"; 
+                
+                document.querySelectorAll("input[name='location']").forEach(radio => radio.checked = false);
+                document.querySelectorAll(".chair").forEach(chair => chair.classList.remove("clicked"));
+            }
+        }
+
+        document.querySelectorAll("input[name='location']").forEach(radio => {
+            radio.addEventListener("change", () => {
+                const roomLayout = document.getElementById("room-layout");
+                roomLayout.style.display = radio.value === "homebase" ? "block" : "none";
+            });
+        });
+
+        document.querySelectorAll(".chair").forEach(chair => {
+            chair.addEventListener("click", () => {
+                document.querySelectorAll(".chair").forEach(item => item.classList.remove("clicked"));
+                chair.classList.add("clicked");
+            });
+        });
+
+        function checkAfternoonParticipation() {
+            if (!document.getElementById("afternoon").checked) {
+                const donateDinner = confirm("석식을 기부하시겠습니까?");
+                alert(donateDinner ? "석식을 기부하셨습니다." : "석식을 기부하지 않습니다.");
+            } else {
+                alert("선택을 완료했습니다.");
+            }
+        }
+    </script>
 </body>
 </html>
