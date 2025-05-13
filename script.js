@@ -104,7 +104,7 @@ modal.id = "donation-modal";
 modal.innerHTML = `
     <div class="modal-content">
         <h2>석식을 기부하시겠습니까?</h2>
-        <button id="confirm-donation">기부하기</button>
+        <button id="confirm-donation"> 기부하기 </button>
         <button id="cancel-donation">기부하지 않기</button>
     </div>
 `;
@@ -124,7 +124,6 @@ function checkAfternoonParticipation() {
     }
 }
 
-// 모달 버튼 기능 추가
 document.getElementById("confirm-donation").addEventListener("click", () => {
     alert("석식을 기부하셨습니다.");
     modal.style.display = "none";
