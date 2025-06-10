@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>자율학습 참여 제출</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <form action="https://script.google.com/macros/s/AKfycbwzNCxZb42Wy5zRSXs5kYCfzLIAAcUg0vsvBw9Qog0JZMRTwJaWQcCWpaQXIh4QFT_1/exec" method="post">
+            <div>
+                <label for="userGrade">학년:</label>
+                <input type="number" id="userGrade" name="userGrade" required>
+            </div>
+    
+            <div>
+                <label for="userClass">반:</label>
+                <input type="number" id="userClass" name="userClass" required>
+            </div>
+    
+            <div>
+                <label for="userNumber">번호:</label>
+                <input type="number" id="userNumber" name="userNumber" required>
+            </div>
+    
+            <div>
+                <label>자율학습 참여 여부:</label>
+                <input type="checkbox" id="userAfternoon" name="userAfternoon" value="true"> 오후
+                <input type="checkbox" id="userNight" name="userNight" value="true"> 야간
+            </div>
+    
+            <div>
+                <label>참여 장소:</label>
+                <input type="radio" name="userlocation" value="classroom" required> 교실
+                <input type="radio" name="userlocation" value="corridor"> 복도
+                <input type="radio" name="userlocation" value="homebase"> 홈베이스
+            </div>
+    
+            <div id="seat-selection" style="display: none;">
+                <label>좌석 선택:</label><br>
+                <input type="radio" name="userSet" value="0"> 좌석 1
+                <input type="radio" name="userSet" value="1"> 좌석 2
+                <input type="radio" name="userSet" value="2"> 좌석 3
+                <input type="radio" name="userSet" value="3"> 좌석 4
+                <input type="radio" name="userSet" value="4"> 좌석 5
+                <input type="radio" name="userSet" value="5"> 좌석 6
+                <input type="radio" name="userSet" value="6"> 좌석 7
+                <input type="radio" name="userSet" value="7"> 좌석 8
+                <input type="radio" name="userSet" value="8"> 좌석 9
+                <input type="radio" name="userSet" value="9"> 좌석 10
+                <input type="radio" name="userSet" value="10"> 좌석 11
+                <input type="radio" name="userSet" value="11"> 좌석 12
+            </div>
+    
+            <button type="submit">제출</button>
+        </form>
+    
+        <script>
+            document.querySelectorAll("input[name='userlocation']").forEach(radio => {
+                radio.addEventListener("change", () => {
+                    document.getElementById("seat-selection").style.display = 
+                        radio.value === "homebase" ? "block" : "none";
+                });
+            });
+        </script>
+    </body>
+</html>
