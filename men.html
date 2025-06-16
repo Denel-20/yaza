@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자율 학습 신청</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-round {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider-round:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-round {
+            background-color: #4f46e5;
+        }
+
+        input:focus + .slider-round {
+            box-shadow: 0 0 1px #4f46e5;
+        }
+
+        input:checked + .slider-round:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        #homebase-layout {
+            display: grid;
+            justify-content: center;
+            grid-template-columns: repeat(11, minmax(20px, 1fr));
+            grid-template-rows: repeat(11, 1fr);
+            gap: 5px;
+            width: 100%;
+            max-width: 600px;
+            height: 450px;
+            background-color: #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+
+        .table {
+            background-color: #94a3b8;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .chair {
+            background-color: #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            width: 100%;
+            height: 100%;
+        }
+
+        .chair.seat-selected {
+            background-color: #4f46e5 !important;
+            color: white !important;
+            border: 2px solid #3730a3;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 640px) {
+            #homebase-layout {
+                height: 350px;
+                padding: 10px;
+                gap: 3px;
+            }
+            .chair {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
+    <div class="bg-white p-6 sm:p-8 md:p-10 rounded-3xl shadow-xl max-w-lg w-full text-center transform transition-all duration-300 hover:scale-105">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-1 leading-tight">
+            자율 학습 참여 신청
+        </h1>
+        <h2 class="text-1xl sm:text-2xl text-gray-500 mb-7 leading-tight">30928</h2>
+
+        <form id="selfStudyForm" action="https://script.google.com/macros/s/AKfycbw1FPCJ0qT0w2GrFDhm97PormnwUebLqB-TTTm7KpACI_S2zEZLWLCR53ybJzudTMU2/exec" method="post">
+            <div class="mb-6 text-left flex items-center justify-between">
+                <label class="block text-gray-700 text-lg font-semibold">오후 자율 학습 참여:</label>
+                <div class="flex items-center space-x-2">
+                    <span id="afternoon-status" class="text-gray-600 font-medium">아니오</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="afternoon-self-study" name="userAfternoon" value="false" onchange="updateToggleStatus('afternoon-self-study', 'afternoon-status')">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-6 text-left flex items-center justify-between">
+                <label class="block text-gray-700 text-lg font-semibold">야간 자율 학습 참여:</label>
+                <div class="flex items-center space-x-2">
+                    <span id="night-status" class="text-gray-600 font-medium">아니오</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="night-self-study" name="userNight" value="false" onchange="updateToggleStatus('night-self-study', 'night-status')">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-6 text-left">
+                <label for="study-location" class="block text-gray-700 text-lg font-semibold mb-2">자율 학습 장소:</label>
+                <select id="study-location" name="userLocation" class="block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-base" onchange="toggleHomebaseSeats()">
+                    <option value="classroom">교실</option>
+                    <option value="corridor">복도</option>
+                    <option value="homebase">홈베이스</option>
+                </select>
+                <input type="hidden" id="selected-seat-input" name="userSeat" value="">
+            </div>
+
+            <div id="homebase-seats-section" class="mb-8 text-center hidden">
+                <label class="block text-gray-700 text-lg font-semibold mb-3">홈베이스 자리 선택</label>
+                <div id="homebase-layout">
+                    <div class="table" style="grid-column: 1 / span 11; grid-row: 1;"></div>
+                    <div class="chair" style="grid-column: 1; grid-row: 2;" data-seat-number="0" onclick="selectSeat(this, 0)">1</div>
+                    <div class="chair" style="grid-column: 3; grid-row: 2;" data-seat-number="1" onclick="selectSeat(this, 1)">2</div>
+                    <div class="chair" style="grid-column: 5; grid-row: 2;" data-seat-number="2" onclick="selectSeat(this, 2)">3</div>
+                    <div class="chair" style="grid-column: 7; grid-row: 2;" data-seat-number="3" onclick="selectSeat(this, 3)">4</div>
+                    <div class="chair" style="grid-column: 9; grid-row: 2;" data-seat-number="4" onclick="selectSeat(this, 4)">5</div>
+                    <div class="chair" style="grid-column: 11; grid-row: 2;" data-seat-number="5" onclick="selectSeat(this, 5)">6</div>
+                    <div class="table" style="grid-column: 3; grid-row: 4 / span 7;"></div>
+                    <div class="chair" style="grid-column: 2; grid-row: 4;" data-seat-number="6" onclick="selectSeat(this, 6)">7</div>
+                    <div class="chair" style="grid-column: 2; grid-row: 6;" data-seat-number="7" onclick="selectSeat(this, 7)">8</div>
+                    <div class="chair" style="grid-column: 2; grid-row: 8;" data-seat-number="8" onclick="selectSeat(this, 8)">9</div>
+                    <div class="chair" style="grid-column: 2; grid-row: 10;" data-seat-number="9" onclick="selectSeat(this, 9)">10</div>
+                    <div class="chair" style="grid-column: 4; grid-row: 4;" data-seat-number="10" onclick="selectSeat(this, 10)">11</div>
+                    <div class="chair" style="grid-column: 4; grid-row: 6;" data-seat-number="11" onclick="selectSeat(this, 11)">12</div>
+                    <div class="chair" style="grid-column: 4; grid-row: 8;" data-seat-number="12" onclick="selectSeat(this, 12)">13</div>
+                    <div class="chair" style="grid-column: 4; grid-row: 10;" data-seat-number="13" onclick="selectSeat(this, 13)">14</div>
+                    <div class="table" style="grid-column: 9; grid-row: 4 / span 7;"></div>
+                    <div class="chair" style="grid-column: 8; grid-row: 4;" data-seat-number="14" onclick="selectSeat(this, 14)">15</div>
+                    <div class="chair" style="grid-column: 8; grid-row: 6;" data-seat-number="15" onclick="selectSeat(this, 15)">16</div>
+                    <div class="chair" style="grid-column: 8; grid-row: 8;" data-seat-number="16" onclick="selectSeat(this, 16)">17</div>
+                    <div class="chair" style="grid-column: 8; grid-row: 10;" data-seat-number="17" onclick="selectSeat(this, 17)">18</div>
+                    <div class="chair" style="grid-column: 10; grid-row: 4;" data-seat-number="18" onclick="selectSeat(this, 18)">19</div>
+                    <div class="chair" style="grid-column: 10; grid-row: 6;" data-seat-number="19" onclick="selectSeat(this, 19)">20</div>
+                    <div class="chair" style="grid-column: 10; grid-row: 8;" data-seat-number="20" onclick="selectSeat(this, 20)">21</div>
+                    <div class="chair" style="grid-column: 10; grid-row: 10;" data-seat-number="21" onclick="selectSeat(this, 21)">22</div>
+                </div>
+            </div>
+
+            <input type="hidden" name="userGrade" value="3">
+            <input type="hidden" name="userClass" value="9">
+            <input type="hidden" name="userNumber" value="28">
+
+            <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 transform hover:-translate-y-1 mt-6">
+                신청 완료
+            </button>
+
+            <p id="application-result" class="text-base text-green-700 font-semibold mt-4 hidden">
+                신청이 완료되었습니다!
+            </p>
+            <p id="application-error" class="text-base text-red-700 font-semibold mt-4 hidden">
+                신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+            </p>
+        </form>
+    </div>
+
+    <script>
+        let selectedHomebaseSeat = null;
+
+        function updateToggleStatus(toggleId, statusId) {
+            const toggle = document.getElementById(toggleId);
+            const statusSpan = document.getElementById(statusId);
+            if (toggle.checked) {
+                statusSpan.textContent = '네';
+                statusSpan.classList.remove('text-gray-600');
+                statusSpan.classList.add('text-indigo-600');
+                toggle.value = "true";
+            } else {
+                statusSpan.textContent = '아니오';
+                statusSpan.classList.remove('text-indigo-600');
+                statusSpan.classList.add('text-gray-600');
+                toggle.value = "false";
+            }
+        }
+
+        function toggleHomebaseSeats() {
+            const locationSelect = document.getElementById('study-location');
+            const homebaseSection = document.getElementById('homebase-seats-section');
+            const selectedSeatInput = document.getElementById('selected-seat-input');
+
+            if (locationSelect.value === 'homebase') {
+                homebaseSection.classList.remove('hidden');
+            } else {
+                homebaseSection.classList.add('hidden');
+                if (selectedHomebaseSeat) {
+                    selectedHomebaseSeat.classList.remove('seat-selected');
+                    selectedHomebaseSeat = null;
+                }
+                selectedSeatInput.value = "";
+            }
+        }
+
+        function selectSeat(element, seatNumber) {
+            if (selectedHomebaseSeat) {
+                selectedHomebaseSeat.classList.remove('seat-selected');
+            }
+
+            element.classList.add('seat-selected');
+            selectedHomebaseSeat = element;
+
+            document.getElementById('selected-seat-input').value = seatNumber;
+
+            console.log(`선택된 홈베이스 자리 인덱스: ${seatNumber}`);
+        }
+
+        document.getElementById('selfStudyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const location = document.getElementById('study-location').value;
+            const selectedSeatInput = document.getElementById('selected-seat-input');
+            const resultElement = document.getElementById('application-result');
+            const errorElement = document.getElementById('application-error');
+
+            resultElement.classList.add('hidden');
+            errorElement.classList.add('hidden');
+
+            if (location === 'homebase' && selectedSeatInput.value === "") {
+                showMessageBox('홈베이스를 선택했다면 자리를 선택해 주세요.');
+                return;
+            }
+
+            const formData = new FormData(this);
+            
+            if (!document.getElementById('afternoon-self-study').checked) {
+                formData.set('userAfternoon', 'false');
+            }
+            if (!document.getElementById('night-self-study').checked) {
+                formData.set('userNight', 'false');
+            }
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                console.log('Apps Script 응답:', data);
+
+                if (data.status === 'success') {
+                    resultElement.textContent = data.message;
+                    resultElement.classList.remove('hidden');
+                    document.getElementById('selfStudyForm').reset();
+                    document.getElementById('afternoon-self-study').checked = false;
+                    document.getElementById('night-self-study').checked = false;
+                    updateToggleStatus('afternoon-self-study', 'afternoon-status');
+                    updateToggleStatus('night-self-study', 'night-status');
+                    document.getElementById('study-location').value = 'classroom';
+                    toggleHomebaseSeats();
+
+                    setTimeout(() => {
+                        resultElement.classList.add('hidden');
+                    }, 3000);
+                } else {
+                    errorElement.textContent = data.message;
+                    errorElement.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorElement.classList.add('hidden');
+                    }, 5000);
+                }
+            })
+            .catch(error => {
+                console.error('폼 제출 오류:', error);
+                errorElement.textContent = '네트워크 오류 또는 서버 응답 문제: ' + error.message;
+                errorElement.classList.remove('hidden');
+                setTimeout(() => {
+                    errorElement.classList.add('hidden');
+                }, 5000);
+            });
+        });
+
+
+        function showMessageBox(message) {
+            const messageBox = document.createElement('div');
+            messageBox.id = 'custom-message-box';
+            messageBox.className = 'fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50';
+            messageBox.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-xs w-full">
+                    <p class="text-lg font-semibold text-gray-800 mb-4">${message}</p>
+                    <button class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-full hover:bg-indigo-700 transition-colors duration-200" onclick="closeMessageBox()">확인</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+        }
+
+        function closeMessageBox() {
+            const messageBox = document.getElementById('custom-message-box');
+            if (messageBox) {
+                messageBox.remove();
+            }
+        }
+
+        window.onload = function() {
+            document.getElementById('afternoon-self-study').checked = false;
+            document.getElementById('night-self-study').checked = false;
+            updateToggleStatus('afternoon-self-study', 'afternoon-status');
+            updateToggleStatus('night-self-study', 'night-status');
+            
+            document.getElementById('study-location').value = 'classroom';
+            toggleHomebaseSeats();
+        };
+    </script>
+</body>
+</html>
