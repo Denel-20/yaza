@@ -6,6 +6,7 @@
     <title>자율 학습 신청</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -87,7 +88,6 @@
             margin: 0 auto;
         }
 
-
         .table {
             background-color: #94a3b8;
             border-radius: 8px;
@@ -137,6 +137,36 @@
             자율 학습 참여 신청
         </h1>
         <h2 class="text-1xl sm:text-2xl text-gray-500 mb-7 leading-tight">30928</h2>
+
+        <!-- Google Sign-In 버튼 추가 -->
+        <div id="g_id_onload"
+             data-client_id="111265835101-og7h28ue6o70bk2ubfbrgd89p0cfgimv.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
+        </div>
+
+        <!-- 로그인된 사용자 정보 표시 영역 -->
+        <div id="user-info" class="text-center mt-4 hidden">
+            <p class="text-gray-700 text-base font-semibold">로그인된 계정:</p>
+            <p id="user-email" class="text-indigo-600 text-lg font-bold"></p>
+            <input type="hidden" id="user-google-id" name="userGoogleId">
+            <input type="hidden" id="user-name" name="userName">
+            <input type="hidden" id="user-email-input" name="userEmail">
+        </div>
+
+        <!-- 로그인 경고 메시지 -->
+        <div id="login-warning" class="text-red-600 text-sm mt-2 hidden">
+            신청을 위해 구글 로그인이 필요합니다.
+        </div>
 
         <form id="selfStudyForm" action="https://script.google.com/macros/s/AKfycbw1FPCJ0qT0w2GrFDhm97PormnwUebLqB-TTTm7KpACI_S2zEZLWLCR53ybJzudTMU2/exec" method="post">
             <div class="mb-6 text-left flex items-center justify-between">
@@ -221,6 +251,39 @@
 
     <script>
         let selectedHomebaseSeat = null;
+        let loggedInUser = null; // 로그인된 사용자 정보를 저장할 변수
+
+        // Google 로그인 콜백 함수
+        function handleCredentialResponse(response) {
+            const responsePayload = decodeJwtResponse(response.credential);
+            console.log("ID Token Decoded:", responsePayload);
+
+            loggedInUser = {
+                id: responsePayload.sub,
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture
+            };
+
+            document.getElementById('user-email').textContent = loggedInUser.email;
+            document.getElementById('user-info').classList.remove('hidden');
+            document.getElementById('login-warning').classList.add('hidden'); // 로그인 성공 시 경고 숨김
+
+            // 폼에 숨겨진 값으로 사용자 정보 추가
+            document.getElementById('user-google-id').value = loggedInUser.id;
+            document.getElementById('user-name').value = loggedInUser.name;
+            document.getElementById('user-email-input').value = loggedInUser.email;
+        }
+
+        // JWT 디코딩 함수 (간단화)
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
 
         function updateToggleStatus(toggleId, statusId) {
             const toggle = document.getElementById(toggleId);
@@ -275,9 +338,18 @@
             const selectedSeatInput = document.getElementById('selected-seat-input');
             const resultElement = document.getElementById('application-result');
             const errorElement = document.getElementById('application-error');
+            const loginWarning = document.getElementById('login-warning'); // 로그인 경고 요소
 
             resultElement.classList.add('hidden');
             errorElement.classList.add('hidden');
+            loginWarning.classList.add('hidden'); // 제출 시 경고 숨김
+
+            // 구글 로그인 여부 확인
+            if (!loggedInUser) {
+                loginWarning.classList.remove('hidden'); // 경고 표시
+                showMessageBox('신청을 위해 먼저 구글 로그인을 해주세요.');
+                return; // 제출 중단
+            }
 
             if (location === 'homebase' && selectedSeatInput.value === "") {
                 showMessageBox('홈베이스를 선택했다면 자리를 선택해 주세요.');
@@ -286,6 +358,11 @@
 
             const formData = new FormData(this);
             
+            // 로그인된 사용자 정보 추가
+            formData.set('userGoogleId', loggedInUser.id);
+            formData.set('userName', loggedInUser.name);
+            formData.set('userEmail', loggedInUser.email);
+
             if (!document.getElementById('afternoon-self-study').checked) {
                 formData.set('userAfternoon', 'false');
             }
@@ -298,7 +375,15 @@
                 body: formData
             })
             .then(response => {
-                return response.json();
+                // 응답이 JSON이 아닐 수 있으므로 텍스트로 먼저 읽고 파싱 시도
+                return response.text().then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error("Failed to parse JSON response:", text);
+                        throw new Error("서버 응답 형식이 올바르지 않습니다.");
+                    }
+                });
             })
             .then(data => {
                 console.log('Apps Script 응답:', data);
@@ -306,6 +391,7 @@
                 if (data.status === 'success') {
                     resultElement.textContent = data.message;
                     resultElement.classList.remove('hidden');
+                    // 폼 초기화 (로그인 정보는 유지)
                     document.getElementById('selfStudyForm').reset();
                     document.getElementById('afternoon-self-study').checked = false;
                     document.getElementById('night-self-study').checked = false;
@@ -318,7 +404,7 @@
                         resultElement.classList.add('hidden');
                     }, 3000);
                 } else {
-                    errorElement.textContent = data.message;
+                    errorElement.textContent = data.message || '신청 중 오류가 발생했습니다.';
                     errorElement.classList.remove('hidden');
                     setTimeout(() => {
                         errorElement.classList.add('hidden');
