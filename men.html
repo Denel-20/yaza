@@ -147,6 +147,24 @@
              data-auto_prompt="false">
         </div>
 
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
+        </div>
+
+        <!-- 로그인된 사용자 정보 표시 영역 -->
+        <div id="user-info" class="text-center mt-4 hidden">
+            <p class="text-gray-700 text-base font-semibold">로그인된 계정:</p>
+            <p id="user-email" class="text-indigo-600 text-lg font-bold"></p>
+            <input type="hidden" id="user-google-id" name="userGoogleId">
+            <input type="hidden" id="user-name" name="userName">
+            <input type="hidden" id="user-email-input" name="userEmail">
+        </div>
+
         <!-- 로그인 경고 메시지 -->
         <div id="login-warning" class="text-red-600 text-sm mt-2 hidden">
             신청을 위해 구글 로그인이 필요합니다.
