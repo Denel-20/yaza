@@ -6,7 +6,6 @@
     <title>자율 학습 신청</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Google Identity Services 라이브러리 추가 -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body {
@@ -137,10 +136,8 @@
         <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-1 leading-tight">
             자율 학습 참여 신청
         </h1>
-        <!-- 학년-반-번호 표시 영역 (동적으로 업데이트될 예정) -->
         <h2 id="student-id-display" class="text-1xl sm:text-2xl text-gray-500 mb-7 leading-tight hidden"></h2>
 
-        <!-- Google Sign-In 버튼 추가 -->
         <div id="g_id_onload"
              data-client_id="111265835101-og7h28ue6o70bk2ubfbrgd89p0cfgimv.apps.googleusercontent.com"
              data-callback="handleCredentialResponse"
@@ -156,16 +153,6 @@
              data-logo_alignment="left">
         </div>
 
-        <!-- 로그인된 사용자 정보 표시 영역 -->
-        <div id="user-info" class="text-center mt-4 hidden">
-            <p class="text-gray-700 text-base font-semibold">로그인된 계정:</p>
-            <p id="user-email" class="text-indigo-600 text-lg font-bold"></p>
-            <input type="hidden" id="user-google-id" name="userGoogleId">
-            <input type="hidden" id="user-name" name="userName">
-            <input type="hidden" id="user-email-input" name="userEmail">
-        </div>
-
-        <!-- 로그인 경고 메시지 -->
         <div id="login-warning" class="text-red-600 text-sm mt-2 hidden">
             신청을 위해 구글 로그인이 필요합니다.
         </div>
@@ -234,10 +221,12 @@
                 </div>
             </div>
 
-            <!-- 학년, 반, 번호 입력 필드 (동적으로 채워질 예정) -->
             <input type="hidden" id="user-grade-input" name="userGrade" value="">
             <input type="hidden" id="user-class-input" name="userClass" value="">
             <input type="hidden" id="user-number-input" name="userNumber" value="">
+            <input type="hidden" id="user-google-id" name="userGoogleId">
+            <input type="hidden" id="user-name" name="userName">
+            <input type="hidden" id="user-email-input" name="userEmail">
 
             <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 transform hover:-translate-y-1 mt-6">
                 신청 완료
@@ -257,8 +246,8 @@
         let loggedInUser = null; // 로그인된 사용자 정보를 저장할 변수
 
         // 허용할 이메일 도메인 및 패턴 (정규식 사용)
-        // 'XX-YYYYY@guam.dge.hs.kr' 형식에서 YYYYY 부분을 캡처합니다.
-        const EMAIL_PATTERN = /^\d+-(\d{5})@guam\.dge\.hs\.kr$/; 
+        // '25-YYYYY@guam.dge.hs.kr' 형식에서 YYYYY 부분을 캡처합니다.
+        const EMAIL_PATTERN = /^25-(\d{5})@guam\.dge\.hs\.kr$/; 
 
         // Google 로그인 콜백 함수
         function handleCredentialResponse(response) {
@@ -283,13 +272,8 @@
                     picture: responsePayload.picture
                 };
 
-                // UI 업데이트: 로그인된 이메일 표시
-                document.getElementById('user-email').textContent = loggedInUser.email;
-                document.getElementById('user-info').classList.remove('hidden');
-                document.getElementById('login-warning').classList.add('hidden'); // 로그인 성공 시 경고 숨김
-
                 // UI 업데이트: 학번/반/번호 표시
-                document.getElementById('student-id-display').textContent = studentIdPart;
+                document.getElementById('student-id-display').textContent = `${grade}학년 ${parseInt(_class, 10)}반 ${parseInt(number, 10)}번`;
                 document.getElementById('student-id-display').classList.remove('hidden'); // h2 태그 표시
 
                 // 폼에 숨겨진 값으로 사용자 정보 및 학년/반/번호 추가
@@ -300,12 +284,12 @@
                 document.getElementById('user-class-input').value = _class;
                 document.getElementById('user-number-input').value = number;
 
+                // 로그인 성공 시 경고 숨김
+                document.getElementById('login-warning').classList.add('hidden'); 
             } else {
                 // 유효하지 않은 계정인 경우: 로그인 정보 초기화 및 경고 메시지 표시
                 loggedInUser = null; // 로그인 정보 초기화
-                document.getElementById('user-info').classList.add('hidden'); // 사용자 정보 숨김
-                document.getElementById('user-email').textContent = ''; // 이메일 필드 초기화
-                showMessageBox('허용되지 않는 계정입니다. 학교 계정으로 로그인해주세요. (예: 25-30928@guam.dge.hs.kr)');
+                showMessageBox('허용되지 않는 계정입니다. "25-학번@guam.dge.hs.kr" 형식의 학교 계정으로 로그인해주세요.');
                 document.getElementById('login-warning').classList.remove('hidden'); // 로그인 경고 표시
                 
                 // 숨겨진 폼 필드 및 학번/반/번호 초기화
@@ -405,12 +389,8 @@
 
             const formData = new FormData(this);
             
-            // 로그인된 사용자 정보 추가
-            formData.set('userGoogleId', loggedInUser.id);
-            formData.set('userName', loggedInUser.name);
-            formData.set('userEmail', loggedInUser.email);
-            // userGrade, userClass, userNumber는 handleCredentialResponse에서 이미 채워졌으므로 다시 설정할 필요 없음
-
+            // 로그인된 사용자 정보 추가 (hidden input 필드에 이미 설정되어 있음)
+            
             if (!document.getElementById('afternoon-self-study').checked) {
                 formData.set('userAfternoon', 'false');
             }
