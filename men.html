@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
+        /* CSS styles remain the same */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8;
@@ -169,7 +170,7 @@
             신청을 위해 구글 로그인이 필요합니다.
         </div>
 
-        <form id="selfStudyForm" action="https://script.google.com/macros/s/AKfycbyJlITyQlSYmRD23T0qr2PjJk8U8NxcTqhy7ddGEeDtLORquRRlcKSU_F8ekQ5ZJAK2/exec" method="post">
+        <form id="selfStudyForm" action="[여기에 새로 복사한 Apps Script 웹 앱 URL을 붙여넣으세요]" method="post">
             <div class="mb-6 text-left flex items-center justify-between">
                 <label class="block text-gray-700 text-lg font-semibold">오후 자율 학습 참여:</label>
                 <div class="flex items-center space-x-2">
@@ -263,9 +264,10 @@
         let loggedInUser = null;
         let availableHomebaseSeats = [];
 
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw1FPCJ0qT0w2GrFDhm97PormnwUebLqB-TTTm7KpACI_S2zEZLWLCR53ybJzudTMU2/exec"; 
+        // !!! 이 URL을 Apps Script에서 새로 배포한 URL로 교체하세요 !!!
+        const GAS_WEB_APP_URL = "[여기에 새로 복사한 Apps Script 웹 앱 URL을 붙여넣으세요]";
         
-        const EMAIL_PATTERN = /^25-(\d{5})@guam\.dge\.hs\.kr$/; 
+        const EMAIL_PATTERN = /^25-(\d{5})@guam\.dge\.hs\.kr$/;
 
         async function handleCredentialResponse(response) {
             const responsePayload = decodeJwtResponse(response.credential);
@@ -275,10 +277,10 @@
             const match = userEmail.match(EMAIL_PATTERN);
 
             if (match) {
-                const studentIdPart = match[1]; 
-                const grade = studentIdPart.substring(0, 1); 
-                const _class = studentIdPart.substring(1, 3); 
-                const number = studentIdPart.substring(3, 5); 
+                const studentIdPart = match[1];
+                const grade = studentIdPart.substring(0, 1);
+                const _class = studentIdPart.substring(1, 3);
+                const number = studentIdPart.substring(3, 5);
 
                 loggedInUser = {
                     id: responsePayload.sub,
@@ -297,15 +299,15 @@
                 document.getElementById('user-class-input').value = _class;
                 document.getElementById('user-number-input').value = number;
 
-                document.getElementById('login-warning').classList.add('hidden'); 
+                document.getElementById('login-warning').classList.add('hidden');
 
                 // 로그인 성공 후 홈베이스 빈 좌석 정보 가져오기
-                await fetchAvailableHomebaseSeats(); 
+                await fetchAvailableHomebaseSeats();
 
             } else {
-                loggedInUser = null; 
+                loggedInUser = null;
                 showMessageBox('허용되지 않는 계정입니다. "25-학번@guam.dge.hs.kr" 형식의 학교 계정으로 로그인해주세요.');
-                document.getElementById('login-warning').classList.remove('hidden'); 
+                document.getElementById('login-warning').classList.remove('hidden');
                 
                 document.getElementById('user-google-id').value = '';
                 document.getElementById('user-name').value = '';
@@ -443,14 +445,14 @@
             const selectedSeatInput = document.getElementById('selected-seat-input');
             const resultElement = document.getElementById('application-result');
             const errorElement = document.getElementById('application-error');
-            const loginWarning = document.getElementById('login-warning'); 
+            const loginWarning = document.getElementById('login-warning');
 
             resultElement.classList.add('hidden');
             errorElement.classList.add('hidden');
             loginWarning.classList.add('hidden');
 
             if (!loggedInUser) {
-                loginWarning.classList.remove('hidden'); 
+                loginWarning.classList.remove('hidden');
                 showMessageBox('신청을 위해 먼저 구글 로그인을 해주세요.');
                 return;
             }
