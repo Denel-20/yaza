@@ -104,11 +104,16 @@
             font-size: 0.75rem;
             font-weight: bold;
             color: #475569;
-            cursor: pointer;
             transition: all 0.2s ease-in-out;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
             width: 100%;
             height: 100%;
+            opacity: 0.7; /* 기본적으로 비활성화된 것처럼 보이게 */
+        }
+
+        .chair.available {
+            cursor: pointer;
+            opacity: 1; /* 활성화된 좌석은 투명도 복원 */
         }
 
         .chair.seat-selected {
@@ -117,6 +122,13 @@
             border: 2px solid #3730a3;
             transform: scale(1.05);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .chair.occupied {
+            background-color: #ef4444; /* 사용 중인 좌석은 붉은색 */
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.8;
         }
 
         @media (max-width: 640px) {
@@ -194,30 +206,35 @@
                 <label class="block text-gray-700 text-lg font-semibold mb-3">홈베이스 자리 선택</label>
                 <div id="homebase-layout">
                     <div class="table" style="grid-column: 1 / span 11; grid-row: 1;"></div>
-                    <div class="chair" style="grid-column: 1; grid-row: 2;" data-seat-number="0" onclick="selectSeat(this, 0)">1</div>
-                    <div class="chair" style="grid-column: 3; grid-row: 2;" data-seat-number="1" onclick="selectSeat(this, 1)">2</div>
-                    <div class="chair" style="grid-column: 5; grid-row: 2;" data-seat-number="2" onclick="selectSeat(this, 2)">3</div>
-                    <div class="chair" style="grid-column: 7; grid-row: 2;" data-seat-number="3" onclick="selectSeat(this, 3)">4</div>
-                    <div class="chair" style="grid-column: 9; grid-row: 2;" data-seat-number="4" onclick="selectSeat(this, 4)">5</div>
-                    <div class="chair" style="grid-column: 11; grid-row: 2;" data-seat-number="5" onclick="selectSeat(this, 5)">6</div>
                     <div class="table" style="grid-column: 3; grid-row: 4 / span 7;"></div>
-                    <div class="chair" style="grid-column: 2; grid-row: 4;" data-seat-number="6" onclick="selectSeat(this, 6)">7</div>
-                    <div class="chair" style="grid-column: 2; grid-row: 6;" data-seat-number="7" onclick="selectSeat(this, 7)">8</div>
-                    <div class="chair" style="grid-column: 2; grid-row: 8;" data-seat-number="8" onclick="selectSeat(this, 8)">9</div>
-                    <div class="chair" style="grid-column: 2; grid-row: 10;" data-seat-number="9" onclick="selectSeat(this, 9)">10</div>
-                    <div class="chair" style="grid-column: 4; grid-row: 4;" data-seat-number="10" onclick="selectSeat(this, 10)">11</div>
-                    <div class="chair" style="grid-column: 4; grid-row: 6;" data-seat-number="11" onclick="selectSeat(this, 11)">12</div>
-                    <div class="chair" style="grid-column: 4; grid-row: 8;" data-seat-number="12" onclick="selectSeat(this, 12)">13</div>
-                    <div class="chair" style="grid-column: 4; grid-row: 10;" data-seat-number="13" onclick="selectSeat(this, 13)">14</div>
                     <div class="table" style="grid-column: 9; grid-row: 4 / span 7;"></div>
-                    <div class="chair" style="grid-column: 8; grid-row: 4;" data-seat-number="14" onclick="selectSeat(this, 14)">15</div>
-                    <div class="chair" style="grid-column: 8; grid-row: 6;" data-seat-number="15" onclick="selectSeat(this, 15)">16</div>
-                    <div class="chair" style="grid-column: 8; grid-row: 8;" data-seat-number="16" onclick="selectSeat(this, 16)">17</div>
-                    <div class="chair" style="grid-column: 8; grid-row: 10;" data-seat-number="17" onclick="selectSeat(this, 17)">18</div>
-                    <div class="chair" style="grid-column: 10; grid-row: 4;" data-seat-number="18" onclick="selectSeat(this, 18)">19</div>
-                    <div class="chair" style="grid-column: 10; grid-row: 6;" data-seat-number="19" onclick="selectSeat(this, 19)">20</div>
-                    <div class="chair" style="grid-column: 10; grid-row: 8;" data-seat-number="20" onclick="selectSeat(this, 20)">21</div>
-                    <div class="chair" style="grid-column: 10; grid-row: 10;" data-seat-number="21" onclick="selectSeat(this, 21)">22</div>
+
+                    <div class="chair" style="grid-column: 1; grid-row: 2;" data-seat-number="0">1</div>
+                    <div class="chair" style="grid-column: 3; grid-row: 2;" data-seat-number="1">2</div>
+                    <div class="chair" style="grid-column: 5; grid-row: 2;" data-seat-number="2">3</div>
+                    <div class="chair" style="grid-column: 7; grid-row: 2;" data-seat-number="3">4</div>
+                    <div class="chair" style="grid-column: 9; grid-row: 2;" data-seat-number="4">5</div>
+                    <div class="chair" style="grid-column: 11; grid-row: 2;" data-seat-number="5">6</div>
+
+                    <div class="chair" style="grid-column: 2; grid-row: 4;" data-seat-number="6">7</div>
+                    <div class="chair" style="grid-column: 2; grid-row: 6;" data-seat-number="7">8</div>
+                    <div class="chair" style="grid-column: 2; grid-row: 8;" data-seat-number="8">9</div>
+                    <div class="chair" style="grid-column: 2; grid-row: 10;" data-seat-number="9">10</div>
+
+                    <div class="chair" style="grid-column: 4; grid-row: 4;" data-seat-number="10">11</div>
+                    <div class="chair" style="grid-column: 4; grid-row: 6;" data-seat-number="11">12</div>
+                    <div class="chair" style="grid-column: 4; grid-row: 8;" data-seat-number="12">13</div>
+                    <div class="chair" style="grid-column: 4; grid-row: 10;" data-seat-number="13">14</div>
+
+                    <div class="chair" style="grid-column: 8; grid-row: 4;" data-seat-number="14">15</div>
+                    <div class="chair" style="grid-column: 8; grid-row: 6;" data-seat-number="15">16</div>
+                    <div class="chair" style="grid-column: 8; grid-row: 8;" data-seat-number="16">17</div>
+                    <div class="chair" style="grid-column: 8; grid-row: 10;" data-seat-number="17">18</div>
+
+                    <div class="chair" style="grid-column: 10; grid-row: 4;" data-seat-number="18">19</div>
+                    <div class="chair" style="grid-column: 10; grid-row: 6;" data-seat-number="19">20</div>
+                    <div class="chair" style="grid-column: 10; grid-row: 8;" data-seat-number="20">21</div>
+                    <div class="chair" style="grid-column: 10; grid-row: 10;" data-seat-number="21">22</div>
                 </div>
             </div>
 
@@ -243,28 +260,26 @@
 
     <script>
         let selectedHomebaseSeat = null;
-        let loggedInUser = null; // 로그인된 사용자 정보를 저장할 변수
+        let loggedInUser = null;
+        let availableHomebaseSeats = [];
 
-        // 허용할 이메일 도메인 및 패턴 (정규식 사용)
-        // '25-YYYYY@guam.dge.hs.kr' 형식에서 YYYYY 부분을 캡처합니다.
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw1FPCJ0qT0w2GrFDhm97PormnwUebLqB-TTTm7KpACI_S2zEZLWLCR53ybJzudTMU2/exec"; 
+        
         const EMAIL_PATTERN = /^25-(\d{5})@guam\.dge\.hs\.kr$/; 
 
-        // Google 로그인 콜백 함수
-        function handleCredentialResponse(response) {
+        async function handleCredentialResponse(response) {
             const responsePayload = decodeJwtResponse(response.credential);
             console.log("ID Token Decoded:", responsePayload);
 
             const userEmail = responsePayload.email;
             const match = userEmail.match(EMAIL_PATTERN);
 
-            // 이메일 주소 유효성 검사
             if (match) {
-                const studentIdPart = match[1]; // YYYYY 부분 (예: "30928")
-                const grade = studentIdPart.substring(0, 1); // 학년 (예: "3")
-                const _class = studentIdPart.substring(1, 3); // 반 (예: "09")
-                const number = studentIdPart.substring(3, 5); // 번호 (예: "28")
+                const studentIdPart = match[1]; 
+                const grade = studentIdPart.substring(0, 1); 
+                const _class = studentIdPart.substring(1, 3); 
+                const number = studentIdPart.substring(3, 5); 
 
-                // 유효한 계정인 경우: 로그인 정보 저장 및 UI 업데이트
                 loggedInUser = {
                     id: responsePayload.sub,
                     name: responsePayload.name,
@@ -272,11 +287,9 @@
                     picture: responsePayload.picture
                 };
 
-                // UI 업데이트: 학번/반/번호 표시
                 document.getElementById('student-id-display').textContent = `${grade}학년 ${parseInt(_class, 10)}반 ${parseInt(number, 10)}번`;
-                document.getElementById('student-id-display').classList.remove('hidden'); // h2 태그 표시
+                document.getElementById('student-id-display').classList.remove('hidden');
 
-                // 폼에 숨겨진 값으로 사용자 정보 및 학년/반/번호 추가
                 document.getElementById('user-google-id').value = loggedInUser.id;
                 document.getElementById('user-name').value = loggedInUser.name;
                 document.getElementById('user-email-input').value = loggedInUser.email;
@@ -284,15 +297,16 @@
                 document.getElementById('user-class-input').value = _class;
                 document.getElementById('user-number-input').value = number;
 
-                // 로그인 성공 시 경고 숨김
                 document.getElementById('login-warning').classList.add('hidden'); 
+
+                // 로그인 성공 후 홈베이스 빈 좌석 정보 가져오기
+                await fetchAvailableHomebaseSeats(); 
+
             } else {
-                // 유효하지 않은 계정인 경우: 로그인 정보 초기화 및 경고 메시지 표시
-                loggedInUser = null; // 로그인 정보 초기화
+                loggedInUser = null; 
                 showMessageBox('허용되지 않는 계정입니다. "25-학번@guam.dge.hs.kr" 형식의 학교 계정으로 로그인해주세요.');
-                document.getElementById('login-warning').classList.remove('hidden'); // 로그인 경고 표시
+                document.getElementById('login-warning').classList.remove('hidden'); 
                 
-                // 숨겨진 폼 필드 및 학번/반/번호 초기화
                 document.getElementById('user-google-id').value = '';
                 document.getElementById('user-name').value = '';
                 document.getElementById('user-email-input').value = '';
@@ -300,13 +314,16 @@
                 document.getElementById('user-class-input').value = '';
                 document.getElementById('user-number-input').value = '';
                 
-                // 학번/반/번호 표시 영역 숨김
                 document.getElementById('student-id-display').textContent = '';
                 document.getElementById('student-id-display').classList.add('hidden');
+
+                // 계정 유효성 검사 실패 시 홈베이스 좌석 초기화 및 비활성화
+                availableHomebaseSeats = []; // 빈 좌석 없음으로 설정
+                updateHomebaseSeatUI(); // UI 업데이트하여 모든 좌석 비활성화
             }
         }
 
-        // JWT 디코딩 함수 (간단화)
+        // JWT 디코딩 함수
         function decodeJwtResponse(token) {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -315,6 +332,55 @@
             }).join(''));
             return JSON.parse(jsonPayload);
         }
+
+        // Apps Script에서 빈 홈베이스 좌석 정보를 가져오는 함수
+        async function fetchAvailableHomebaseSeats() {
+            try {
+                const response = await fetch(`${GAS_WEB_APP_URL}?action=getAvailableHomebaseSeats`);
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    availableHomebaseSeats = data.availableSeats;
+                    console.log("사용 가능한 홈베이스 좌석:", availableHomebaseSeats);
+                    updateHomebaseSeatUI(); // UI 업데이트
+                } else {
+                    showMessageBox("홈베이스 좌석 정보를 가져오는데 실패했습니다: " + data.message);
+                    console.error("Failed to fetch available homebase seats:", data.message);
+                    availableHomebaseSeats = []; // 에러 시 빈 배열로 설정
+                    updateHomebaseSeatUI(); // 모든 좌석 비활성화
+                }
+            } catch (error) {
+                showMessageBox("홈베이스 좌석 정보를 가져오는 중 네트워크 오류가 발생했습니다.");
+                console.error("Error fetching available homebase seats:", error);
+                availableHomebaseSeats = []; // 에러 시 빈 배열로 설정
+                updateHomebaseSeatUI(); // 모든 좌석 비활성화
+            }
+        }
+
+        // 홈베이스 좌석 UI를 업데이트하는 함수
+        function updateHomebaseSeatUI() {
+            const allChairs = document.querySelectorAll('#homebase-layout .chair');
+            allChairs.forEach(chair => {
+                const seatNumber = parseInt(chair.dataset.seatNumber);
+                chair.classList.remove('available', 'occupied', 'seat-selected');
+                chair.onclick = null; // 모든 클릭 이벤트 핸들러 제거
+
+                if (availableHomebaseSeats.includes(seatNumber)) {
+                    chair.classList.add('available');
+                    chair.onclick = () => selectSeat(chair, seatNumber); // 클릭 이벤트 핸들러 다시 추가
+                } else {
+                    chair.classList.add('occupied'); // 사용 중인 좌석 클래스 추가
+                }
+            });
+
+            // 현재 선택된 좌석이 더 이상 유효하지 않다면 선택 해제
+            if (selectedHomebaseSeat && !availableHomebaseSeats.includes(parseInt(selectedHomebaseSeat.dataset.seatNumber))) {
+                selectedHomebaseSeat.classList.remove('seat-selected');
+                selectedHomebaseSeat = null;
+                document.getElementById('selected-seat-input').value = "";
+            }
+        }
+
 
         function updateToggleStatus(toggleId, statusId) {
             const toggle = document.getElementById(toggleId);
@@ -339,6 +405,8 @@
 
             if (locationSelect.value === 'homebase') {
                 homebaseSection.classList.remove('hidden');
+                // 홈베이스 선택 시 UI 업데이트 (빈 좌석 활성화)
+                updateHomebaseSeatUI();
             } else {
                 homebaseSection.classList.add('hidden');
                 if (selectedHomebaseSeat) {
@@ -350,6 +418,12 @@
         }
 
         function selectSeat(element, seatNumber) {
+            // 사용 가능한 좌석인지 다시 확인 (사용자가 DOM을 조작했을 수도 있으므로)
+            if (!availableHomebaseSeats.includes(seatNumber)) {
+                showMessageBox('이 좌석은 현재 선택할 수 없습니다.');
+                return;
+            }
+
             if (selectedHomebaseSeat) {
                 selectedHomebaseSeat.classList.remove('seat-selected');
             }
@@ -362,34 +436,35 @@
             console.log(`선택된 홈베이스 자리 인덱스: ${seatNumber}`);
         }
 
-        document.getElementById('selfStudyForm').addEventListener('submit', function(event) {
+        document.getElementById('selfStudyForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
             const location = document.getElementById('study-location').value;
             const selectedSeatInput = document.getElementById('selected-seat-input');
             const resultElement = document.getElementById('application-result');
             const errorElement = document.getElementById('application-error');
-            const loginWarning = document.getElementById('login-warning'); // 로그인 경고 요소
+            const loginWarning = document.getElementById('login-warning'); 
 
             resultElement.classList.add('hidden');
             errorElement.classList.add('hidden');
-            loginWarning.classList.add('hidden'); // 제출 시 경고 숨김
+            loginWarning.classList.add('hidden');
 
-            // 구글 로그인 여부 확인
             if (!loggedInUser) {
-                loginWarning.classList.remove('hidden'); // 경고 표시
+                loginWarning.classList.remove('hidden'); 
                 showMessageBox('신청을 위해 먼저 구글 로그인을 해주세요.');
-                return; // 제출 중단
-            }
-
-            if (location === 'homebase' && selectedSeatInput.value === "") {
-                showMessageBox('홈베이스를 선택했다면 자리를 선택해 주세요.');
                 return;
             }
 
-            const formData = new FormData(this);
+            if (location === 'homebase') {
+                // 홈베이스 선택 시, 선택된 좌석이 유효한지 다시 검증
+                const seatNumber = parseInt(selectedSeatInput.value);
+                if (selectedSeatInput.value === "" || isNaN(seatNumber) || !availableHomebaseSeats.includes(seatNumber)) {
+                    showMessageBox('홈베이스를 선택했다면, 사용 가능한 자리를 정확히 선택해 주세요.');
+                    return;
+                }
+            }
             
-            // 로그인된 사용자 정보 추가 (hidden input 필드에 이미 설정되어 있음)
+            const formData = new FormData(this);
             
             if (!document.getElementById('afternoon-self-study').checked) {
                 formData.set('userAfternoon', 'false');
@@ -398,35 +473,38 @@
                 formData.set('userNight', 'false');
             }
 
-            fetch(this.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                // 응답이 JSON이 아닐 수 있으므로 텍스트로 먼저 읽고 파싱 시도
-                return response.text().then(text => {
-                    try {
-                        return JSON.parse(text);
-                    } catch (e) {
-                        console.error("Failed to parse JSON response:", text);
-                        throw new Error("서버 응답 형식이 올바르지 않습니다.");
-                    }
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
                 });
-            })
-            .then(data => {
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error("Failed to parse JSON response:", text);
+                    throw new Error("서버 응답 형식이 올바르지 않습니다.");
+                }
+
                 console.log('Apps Script 응답:', data);
 
                 if (data.status === 'success') {
                     resultElement.textContent = data.message;
                     resultElement.classList.remove('hidden');
-                    // 폼 초기화 (로그인 정보는 유지)
+                    
                     document.getElementById('selfStudyForm').reset();
                     document.getElementById('afternoon-self-study').checked = false;
                     document.getElementById('night-self-study').checked = false;
                     updateToggleStatus('afternoon-self-study', 'afternoon-status');
                     updateToggleStatus('night-self-study', 'night-status');
                     document.getElementById('study-location').value = 'classroom';
+                    
                     toggleHomebaseSeats();
+                    if (loggedInUser) {
+                        await fetchAvailableHomebaseSeats();
+                    }
+
 
                     setTimeout(() => {
                         resultElement.classList.add('hidden');
@@ -438,15 +516,14 @@
                         errorElement.classList.add('hidden');
                     }, 5000);
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('폼 제출 오류:', error);
                 errorElement.textContent = '네트워크 오류 또는 서버 응답 문제: ' + error.message;
                 errorElement.classList.remove('hidden');
                 setTimeout(() => {
                     errorElement.classList.add('hidden');
                 }, 5000);
-            });
+            }
         });
 
 
