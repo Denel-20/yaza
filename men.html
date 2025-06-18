@@ -468,6 +468,7 @@
             
             const formData = new FormData(this);
             
+            // 체크박스가 체크 해제되었을 때도 'false' 값이 전송되도록 보장
             if (!document.getElementById('afternoon-self-study').checked) {
                 formData.set('userAfternoon', 'false');
             }
@@ -495,6 +496,7 @@
                     resultElement.textContent = data.message;
                     resultElement.classList.remove('hidden');
                     
+                    // 폼 초기화 및 토글 상태 업데이트
                     document.getElementById('selfStudyForm').reset();
                     document.getElementById('afternoon-self-study').checked = false;
                     document.getElementById('night-self-study').checked = false;
@@ -502,9 +504,9 @@
                     updateToggleStatus('night-self-study', 'night-status');
                     document.getElementById('study-location').value = 'classroom';
                     
-                    toggleHomebaseSeats();
+                    toggleHomebaseSeats(); // 홈베이스 섹션 다시 숨김
                     if (loggedInUser) {
-                        await fetchAvailableHomebaseSeats();
+                        await fetchAvailableHomebaseSeats(); // 좌석 정보 새로고침
                     }
 
 
@@ -549,15 +551,52 @@
             }
         }
 
-        window.onload = function() {
-            document.getElementById('afternoon-self-study').checked = false;
-            document.getElementById('night-self-study').checked = false;
+        // 페이지 로드 시 초기 폼 상태 설정 및 URL 파라미터 적용
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // userAfternoon 파라미터 적용
+            const userAfternoonParam = urlParams.get('userAfternoon');
+            if (userAfternoonParam !== null) {
+                const afternoonToggle = document.getElementById('afternoon-self-study');
+                if (afternoonToggle) {
+                    afternoonToggle.checked = (userAfternoonParam.toLowerCase() === 'true');
+                }
+            }
+
+            // userNight 파라미터 적용
+            const userNightParam = urlParams.get('userNight');
+            if (userNightParam !== null) {
+                const nightToggle = document.getElementById('night-self-study');
+                if (nightToggle) {
+                    nightToggle.checked = (userNightParam.toLowerCase() === 'true');
+                }
+            }
+
+            // userLocation 파라미터 적용
+            const userLocationParam = urlParams.get('userLocation');
+            if (userLocationParam !== null) {
+                const studyLocationSelect = document.getElementById('study-location');
+                if (studyLocationSelect) {
+                    const validLocations = ["classroom", "corridor", "homebase"];
+                    if (validLocations.includes(userLocationParam.toLowerCase())) {
+                        studyLocationSelect.value = userLocationParam.toLowerCase();
+                    }
+                }
+            }
+            
+            // 모든 폼 필드 업데이트 함수 호출 (URL 파라미터 적용 후)
             updateToggleStatus('afternoon-self-study', 'afternoon-status');
             updateToggleStatus('night-self-study', 'night-status');
-            
-            document.getElementById('study-location').value = 'classroom';
-            toggleHomebaseSeats();
-        };
+            toggleHomebaseSeats(); // URL 파라미터에 따라 홈베이스 섹션 표시 여부 결정
+
+            // 로그인 된 상태라면, 홈베이스 좌석 정보를 즉시 가져오도록 합니다.
+            // (이 로직은 handleCredentialResponse 내부에서 호출되는 것이 더 안정적이지만,
+            // 페이지 로드 시에도 시도할 수 있도록 추가함)
+            if (loggedInUser) {
+                fetchAvailableHomebaseSeats();
+            }
+        });
     </script>
 </body>
 </html>
