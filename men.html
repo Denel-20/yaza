@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        /* CSS styles remain the same */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8;
@@ -109,12 +108,12 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
             width: 100%;
             height: 100%;
-            opacity: 0.7; /* 기본적으로 비활성화된 것처럼 보이게 */
+            opacity: 0.7;
         }
 
         .chair.available {
             cursor: pointer;
-            opacity: 1; /* 활성화된 좌석은 투명도 복원 */
+            opacity: 1;
         }
 
         .chair.seat-selected {
@@ -126,7 +125,7 @@
         }
 
         .chair.occupied {
-            background-color: #ef4444; /* 사용 중인 좌석은 붉은색 */
+            background-color: #ef4444;
             color: white;
             cursor: not-allowed;
             opacity: 0.8;
@@ -264,7 +263,6 @@
         let loggedInUser = null;
         let availableHomebaseSeats = [];
 
-        // !!! 이 URL을 Apps Script에서 새로 배포한 URL로 교체하세요 !!!
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyifutUoYgYkYREeS9kEZr-GklkRNC5iWEj0L2XMdJV8HKhHFblnqvtxSfbUiseeNY/exec";
         
         const EMAIL_PATTERN = /^25-(\d{5})@guam\.dge\.hs\.kr$/;
@@ -301,7 +299,6 @@
 
                 document.getElementById('login-warning').classList.add('hidden');
 
-                // 로그인 성공 후 홈베이스 빈 좌석 정보 가져오기
                 await fetchAvailableHomebaseSeats();
 
             } else {
@@ -319,13 +316,11 @@
                 document.getElementById('student-id-display').textContent = '';
                 document.getElementById('student-id-display').classList.add('hidden');
 
-                // 계정 유효성 검사 실패 시 홈베이스 좌석 초기화 및 비활성화
-                availableHomebaseSeats = []; // 빈 좌석 없음으로 설정
-                updateHomebaseSeatUI(); // UI 업데이트하여 모든 좌석 비활성화
+                availableHomebaseSeats = [];
+                updateHomebaseSeatUI();
             }
         }
 
-        // JWT 디코딩 함수
         function decodeJwtResponse(token) {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -335,7 +330,6 @@
             return JSON.parse(jsonPayload);
         }
 
-        // Apps Script에서 빈 홈베이스 좌석 정보를 가져오는 함수
         async function fetchAvailableHomebaseSeats() {
             try {
                 const response = await fetch(`${GAS_WEB_APP_URL}?action=getAvailableHomebaseSeats`);
@@ -344,38 +338,36 @@
                 if (data.status === "success") {
                     availableHomebaseSeats = data.availableSeats;
                     console.log("사용 가능한 홈베이스 좌석:", availableHomebaseSeats);
-                    updateHomebaseSeatUI(); // UI 업데이트
+                    updateHomebaseSeatUI();
                 } else {
                     showMessageBox("홈베이스 좌석 정보를 가져오는데 실패했습니다: " + data.message);
                     console.error("Failed to fetch available homebase seats:", data.message);
-                    availableHomebaseSeats = []; // 에러 시 빈 배열로 설정
-                    updateHomebaseSeatUI(); // 모든 좌석 비활성화
+                    availableHomebaseSeats = [];
+                    updateHomebaseSeatUI();
                 }
             } catch (error) {
                 showMessageBox("홈베이스 좌석 정보를 가져오는 중 네트워크 오류가 발생했습니다.");
                 console.error("Error fetching available homebase seats:", error);
-                availableHomebaseSeats = []; // 에러 시 빈 배열로 설정
-                updateHomebaseSeatUI(); // 모든 좌석 비활성화
+                availableHomebaseSeats = [];
+                updateHomebaseSeatUI();
             }
         }
 
-        // 홈베이스 좌석 UI를 업데이트하는 함수
         function updateHomebaseSeatUI() {
             const allChairs = document.querySelectorAll('#homebase-layout .chair');
             allChairs.forEach(chair => {
                 const seatNumber = parseInt(chair.dataset.seatNumber);
                 chair.classList.remove('available', 'occupied', 'seat-selected');
-                chair.onclick = null; // 모든 클릭 이벤트 핸들러 제거
+                chair.onclick = null;
 
                 if (availableHomebaseSeats.includes(seatNumber)) {
                     chair.classList.add('available');
-                    chair.onclick = () => selectSeat(chair, seatNumber); // 클릭 이벤트 핸들러 다시 추가
+                    chair.onclick = () => selectSeat(chair, seatNumber);
                 } else {
-                    chair.classList.add('occupied'); // 사용 중인 좌석 클래스 추가
+                    chair.classList.add('occupied');
                 }
             });
 
-            // 현재 선택된 좌석이 더 이상 유효하지 않다면 선택 해제
             if (selectedHomebaseSeat && !availableHomebaseSeats.includes(parseInt(selectedHomebaseSeat.dataset.seatNumber))) {
                 selectedHomebaseSeat.classList.remove('seat-selected');
                 selectedHomebaseSeat = null;
@@ -407,7 +399,6 @@
 
             if (locationSelect.value === 'homebase') {
                 homebaseSection.classList.remove('hidden');
-                // 홈베이스 선택 시 UI 업데이트 (빈 좌석 활성화)
                 updateHomebaseSeatUI();
             } else {
                 homebaseSection.classList.add('hidden');
@@ -420,7 +411,6 @@
         }
 
         function selectSeat(element, seatNumber) {
-            // 사용 가능한 좌석인지 다시 확인 (사용자가 DOM을 조작했을 수도 있으므로)
             if (!availableHomebaseSeats.includes(seatNumber)) {
                 showMessageBox('이 좌석은 현재 선택할 수 없습니다.');
                 return;
@@ -458,7 +448,6 @@
             }
 
             if (location === 'homebase') {
-                // 홈베이스 선택 시, 선택된 좌석이 유효한지 다시 검증
                 const seatNumber = parseInt(selectedSeatInput.value);
                 if (selectedSeatInput.value === "" || isNaN(seatNumber) || !availableHomebaseSeats.includes(seatNumber)) {
                     showMessageBox('홈베이스를 선택했다면, 사용 가능한 자리를 정확히 선택해 주세요.');
@@ -468,7 +457,6 @@
             
             const formData = new FormData(this);
             
-            // 체크박스가 체크 해제되었을 때도 'false' 값이 전송되도록 보장
             if (!document.getElementById('afternoon-self-study').checked) {
                 formData.set('userAfternoon', 'false');
             }
@@ -496,7 +484,6 @@
                     resultElement.textContent = data.message;
                     resultElement.classList.remove('hidden');
                     
-                    // 폼 초기화 및 토글 상태 업데이트
                     document.getElementById('selfStudyForm').reset();
                     document.getElementById('afternoon-self-study').checked = false;
                     document.getElementById('night-self-study').checked = false;
@@ -504,9 +491,9 @@
                     updateToggleStatus('night-self-study', 'night-status');
                     document.getElementById('study-location').value = 'classroom';
                     
-                    toggleHomebaseSeats(); // 홈베이스 섹션 다시 숨김
+                    toggleHomebaseSeats();
                     if (loggedInUser) {
-                        await fetchAvailableHomebaseSeats(); // 좌석 정보 새로고침
+                        await fetchAvailableHomebaseSeats();
                     }
 
 
@@ -551,11 +538,9 @@
             }
         }
 
-        // 페이지 로드 시 초기 폼 상태 설정 및 URL 파라미터 적용
         window.addEventListener('DOMContentLoaded', (event) => {
             const urlParams = new URLSearchParams(window.location.search);
 
-            // userAfternoon 파라미터 적용
             const userAfternoonParam = urlParams.get('userAfternoon');
             if (userAfternoonParam !== null) {
                 const afternoonToggle = document.getElementById('afternoon-self-study');
@@ -564,7 +549,6 @@
                 }
             }
 
-            // userNight 파라미터 적용
             const userNightParam = urlParams.get('userNight');
             if (userNightParam !== null) {
                 const nightToggle = document.getElementById('night-self-study');
@@ -573,7 +557,6 @@
                 }
             }
 
-            // userLocation 파라미터 적용
             const userLocationParam = urlParams.get('userLocation');
             if (userLocationParam !== null) {
                 const studyLocationSelect = document.getElementById('study-location');
@@ -585,14 +568,10 @@
                 }
             }
             
-            // 모든 폼 필드 업데이트 함수 호출 (URL 파라미터 적용 후)
             updateToggleStatus('afternoon-self-study', 'afternoon-status');
             updateToggleStatus('night-self-study', 'night-status');
-            toggleHomebaseSeats(); // URL 파라미터에 따라 홈베이스 섹션 표시 여부 결정
+            toggleHomebaseSeats();
 
-            // 로그인 된 상태라면, 홈베이스 좌석 정보를 즉시 가져오도록 합니다.
-            // (이 로직은 handleCredentialResponse 내부에서 호출되는 것이 더 안정적이지만,
-            // 페이지 로드 시에도 시도할 수 있도록 추가함)
             if (loggedInUser) {
                 fetchAvailableHomebaseSeats();
             }
